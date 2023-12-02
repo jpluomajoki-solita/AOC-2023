@@ -1,7 +1,8 @@
 import java.io.File
+import kotlin.math.min
 
 fun main(args: Array<String>) {
-    day1()
+    day2()
 }
 
 fun day1() {
@@ -62,4 +63,68 @@ fun day1() {
 
     println("part 1: $part1")
     println("part 2: $part2")
+}
+
+fun day2() {
+    val input = File("src/main/resources/d2_actual").readLines()
+
+    val colorCounts = mapOf(
+        "blue" to 14,
+        "green" to 13,
+        "red" to 12
+    )
+
+    val badGames = mutableSetOf<Int>()
+    val allGames = mutableSetOf<Int>()
+
+    var minBlues = mutableListOf<Int>()
+    var minGreens = mutableListOf<Int>()
+    var minReds = mutableListOf<Int>()
+
+
+
+    input.mapIndexed { i, game ->
+
+        minBlues.add(0)
+        minGreens.add(0)
+        minReds.add(0)
+
+        game.split(": ")[1].split("; ").map { round ->
+
+            round.split(", ").map { cubes ->
+
+                var colorAndCount = cubes.split(" ")
+                var count = colorAndCount[0].toInt()
+                var color = colorAndCount[1]
+
+                allGames.add(i+1)
+
+
+                when (color)  {
+                    "blue" -> minBlues[i] = intArrayOf(count, minBlues[i]).max()
+                    "green" -> minGreens[i] = intArrayOf(count, minGreens[i]).max()
+                    "red" -> minReds[i] = intArrayOf(count, minReds[i]).max()
+                }
+
+
+                if (colorCounts[color]!! < count) {
+                    badGames.add(i+1)
+                }
+
+            }
+
+        }
+
+    }
+
+
+    var res = 0;
+    for (i in 0..<minBlues.count()) {
+        res += minBlues[i]*minGreens[i]*minReds[i]
+
+    }
+
+    println("part 1: ${(allGames-badGames).sum()}")
+    println("part 2: $res")
+
 }
